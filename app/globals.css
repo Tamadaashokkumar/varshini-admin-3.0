@@ -1,0 +1,193 @@
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 6% 10%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 6% 10%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 210 100% 50%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 142 76% 36%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
+    --ring: 210 100% 50%;
+    --radius: 0.75rem;
+
+    /* Custom Hyundai Colors */
+    --hyundai-blue: 210 100% 50%;
+    --hyundai-blue-light: 210 100% 60%;
+    --hyundai-blue-dark: 210 100% 40%;
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
+    --danger: 0 84% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family:
+      "Sora",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  code,
+  pre {
+    font-family: "JetBrains Mono", monospace;
+  }
+}
+
+@layer utilities {
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-hover:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .glow-effect {
+    box-shadow:
+      0 0 20px rgba(33, 150, 243, 0.3),
+      0 0 40px rgba(33, 150, 243, 0.2),
+      0 0 60px rgba(33, 150, 243, 0.1);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Custom selection */
+::selection {
+  background-color: rgba(33, 150, 243, 0.3);
+  color: #ffffff;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Remove autofill background */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px rgb(24, 24, 27) inset !important;
+  -webkit-text-fill-color: white !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(59, 130, 246, 0.6); /* Tailwind blue-500 */
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(59, 130, 246, 0.9);
+}
+
+/* 1. Chrome, Edge, మరియు Safari బ్రౌజర్‌ల కోసం */
+
+/* స్క్రోల్ బార్ వెడల్పు (Width) */
+::-webkit-scrollbar {
+  width: 12px; /* మీకు కావాల్సిన సైజు ఇక్కడ ఇవ్వండి */
+}
+
+/* స్క్రోల్ బార్ వెనుక ఉండే దారి (Track - Background) */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* లేత బూడిద రంగు */
+}
+
+/* మనం జరిపే బార్ (Thumb - Handle) */
+::-webkit-scrollbar-thumb {
+  background: #888; /* బూడిద రంగు */
+  border-radius: 6px; /* బార్ గుండ్రంగా రావడానికి */
+  border: 3px solid #f1f1f1; /* బార్ చుట్టూ కొంచెం ఖాళీ రావడానికి */
+}
+
+/* మౌస్ స్క్రోల్ బార్ మీద పెట్టినప్పుడు (Hover Effect) */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* ముదురు రంగు */
+}
+
+/* 2. Firefox బ్రౌజర్ కోసం (Firefox వేరే పద్ధతిని వాడుతుంది) */
+html {
+  scrollbar-width: thin; /* 'auto' లేదా 'thin' */
+  scrollbar-color: #888 #f1f1f1; /* thumb color | track color */
+}
