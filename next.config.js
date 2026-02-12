@@ -1,45 +1,26 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ✅ 1. మీ ఇమేజ్ సెట్టింగ్స్ (అలాగే ఉంచాను)
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
-      },
-      {
-        protocol: "https",
-        hostname: "example.com",
-      },
-      {
-        protocol: "https",
-        hostname: "placehold.co",
-      },
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-      },
-      {
-        protocol: "https",
-        hostname: "upload.wikimedia.org",
-      },
+      { protocol: "https", hostname: "res.cloudinary.com" },
+      { protocol: "https", hostname: "example.com" },
+      { protocol: "https", hostname: "placehold.co" },
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "upload.wikimedia.org" },
     ],
   },
+  typescript: { ignoreBuildErrors: true },
+  eslint: { ignoreDuringBuilds: true },
 
-  // ✅ 2. TypeScript ఎర్రర్స్ ని ఇగ్నోర్ చేయడానికి (కొత్తగా యాడ్ చేసాం)
-  typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    ignoreBuildErrors: true,
-  },
-
-  // ✅ 3. ESLint ఎర్రర్స్ ని ఇగ్నోర్ చేయడానికి (కొత్తగా యాడ్ చేసాం)
-  eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true,
+  // 🔥 ఈ REWRITES భాగం కొత్తగా యాడ్ చేయండి 🔥
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*", // ఫ్రంటెండ్ నుండి '/api' అని కాల్ వెళ్తే...
+        destination: "https://varshini-backend-3-0-1.onrender.com/api/:path*", // ...దాన్ని Render కి మళ్ళించు
+      },
+    ];
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
