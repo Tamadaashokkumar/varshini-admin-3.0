@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
+import api from "@/lib/api";
 
 // --- TYPES ---
 interface CarouselSlide {
@@ -134,10 +135,7 @@ export default function AdminCarouselPage() {
   const fetchSlides = async () => {
     try {
       setIsLoading(true);
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}/carousel/admin/all`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.get("/carousel/admin/all");
       if (res.data.success) setSlides(res.data.data);
     } catch (error) {
       toast.error("Failed to load slides");
@@ -168,7 +166,6 @@ export default function AdminCarouselPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    const token = localStorage.getItem("token");
 
     try {
       const formData = new FormData();
@@ -184,27 +181,21 @@ export default function AdminCarouselPage() {
       }
 
       if (isEditing && currentSlide._id) {
-        await axios.put(`${API_URL}/carousel/${currentSlide._id}`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
+        await api.put(`/carousel/${currentSlide._id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
         });
         toast.success("Updated successfully!");
       } else {
-        await axios.post(`${API_URL}/carousel`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
+        await api.post("/carousel", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
         });
         toast.success("Created successfully!");
       }
       closeModal();
       fetchSlides();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Operation failed");
+      toast.error(error.response?.data?.message || "Operation failed");
     } finally {
       setIsSubmitting(false);
     }
@@ -213,10 +204,7 @@ export default function AdminCarouselPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure? This action cannot be undone.")) return;
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`${API_URL}/carousel/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/carousel/${id}`);
       toast.success("Deleted!");
       fetchSlides();
     } catch (error) {
@@ -226,12 +214,10 @@ export default function AdminCarouselPage() {
 
   const toggleStatus = async (slide: CarouselSlide) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `${API_URL}/carousel/${slide._id}`,
-        { ...slide, isActive: !slide.isActive },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      await api.put(`/carousel/${slide._id}`, {
+        ...slide,
+        isActive: !slide.isActive,
+      });
       fetchSlides();
       toast.success(slide.isActive ? "Slide hidden" : "Slide activated");
     } catch (error) {

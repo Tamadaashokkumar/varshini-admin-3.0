@@ -282,7 +282,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { TableSkeleton } from "@/components/ui/Skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { toast } from "sonner";
 import api from "@/lib/api";
 
@@ -371,15 +371,94 @@ export default function CustomersPage() {
     }
   };
 
+  // 🔥 REAL LAYOUT SKELETON (Fixes CLS for Customers Page)
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
-            Customers
-          </h1>
+      <div className="space-y-6 pb-20">
+        {/* 1. Header Skeleton */}
+        <div className="flex items-center justify-between h-[50px]">
+          <div>
+            <Skeleton className="h-8 w-32 rounded-lg mb-2" /> {/* Title */}
+            <Skeleton className="h-4 w-56 rounded-lg" /> {/* Subtitle */}
+          </div>
         </div>
-        <TableSkeleton />
+
+        {/* 2. Search Bar Skeleton */}
+        <div className="relative">
+          <Skeleton className="h-[46px] w-full rounded-xl" />
+        </div>
+
+        {/* 3. Stats Grid Skeleton (3 Cards) */}
+        <div className="grid gap-4 sm:grid-cols-3">
+          {[...Array(3)].map((_, i) => (
+            <div
+              key={i}
+              className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-white/5"
+            >
+              <Skeleton className="h-4 w-24 rounded mb-2" /> {/* Label */}
+              <Skeleton className="h-8 w-16 rounded" /> {/* Value */}
+            </div>
+          ))}
+        </div>
+
+        {/* 4. Table Skeleton */}
+        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-white/10 dark:bg-white/[0.02]">
+          {/* Table Header */}
+          <div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50 px-6 py-4 dark:border-white/10 dark:bg-white/5">
+            <Skeleton className="h-4 w-24 rounded" /> {/* Customer */}
+            <Skeleton className="h-4 w-24 rounded" /> {/* Contact */}
+            <Skeleton className="h-4 w-24 rounded" /> {/* Location */}
+            <Skeleton className="h-4 w-24 rounded" /> {/* Status */}
+            <Skeleton className="h-4 w-24 rounded" /> {/* Joined */}
+          </div>
+
+          {/* Table Rows (Create 8 Fake Rows) */}
+          <div className="divide-y divide-zinc-100 dark:divide-white/5">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="flex items-center px-6 py-4">
+                {/* Column 1: Customer (Avatar + Name) */}
+                <div className="w-1/5 flex items-center gap-3">
+                  <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+                  <div className="space-y-1">
+                    <Skeleton className="h-4 w-32 rounded" />
+                    <Skeleton className="h-3 w-20 rounded" />
+                  </div>
+                </div>
+
+                {/* Column 2: Contact */}
+                <div className="w-1/5 space-y-2">
+                  <Skeleton className="h-3 w-36 rounded" />
+                  <Skeleton className="h-3 w-28 rounded" />
+                </div>
+
+                {/* Column 3: Location */}
+                <div className="w-1/5">
+                  <Skeleton className="h-4 w-32 rounded" />
+                </div>
+
+                {/* Column 4: Status (Badge) */}
+                <div className="w-1/5">
+                  <Skeleton className="h-6 w-20 rounded-full" />
+                </div>
+
+                {/* Column 5: Date */}
+                <div className="w-1/5">
+                  <Skeleton className="h-4 w-24 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination Skeleton */}
+          <div className="flex items-center justify-between border-t border-zinc-100 bg-zinc-50 px-6 py-4 dark:border-white/5 dark:bg-white/5">
+            <Skeleton className="h-4 w-48 rounded" />
+            <div className="flex gap-2">
+              <Skeleton className="h-9 w-9 rounded-lg" /> {/* Prev */}
+              <Skeleton className="h-9 w-32 rounded-lg" /> {/* Page Info */}
+              <Skeleton className="h-9 w-9 rounded-lg" /> {/* Next */}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

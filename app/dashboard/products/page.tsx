@@ -1069,7 +1069,7 @@ import {
   Zap,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
-import { TableSkeleton } from "@/components/ui/Skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { ProductService } from "@/lib/api";
 import { toast } from "sonner";
 import { formatCurrency, cn } from "@/lib/utils";
@@ -1438,19 +1438,93 @@ export default function ProductsPage() {
     "Suspension",
   ];
 
-  if (isLoading && products.length === 0)
+  // 🔥 REAL LAYOUT SKELETON (Fixes CLS)
+  if (isLoading && products.length === 0) {
     return (
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
-          Products
-        </h1>
-        {TableSkeleton ? (
-          <TableSkeleton />
-        ) : (
-          <div className="text-zinc-500 dark:text-white">Loading...</div>
-        )}
+      <div className="space-y-6 pb-20 px-2 md:px-0">
+        {/* 1. Header Skeleton */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between h-[60px]">
+          <div>
+            <Skeleton className="h-8 w-32 rounded-lg mb-2" /> {/* Title */}
+            <Skeleton className="h-4 w-48 rounded-lg" /> {/* Subtitle */}
+          </div>
+          <div className="flex gap-2">
+            <Skeleton className="h-10 w-24 rounded-lg" /> {/* Refresh */}
+            <Skeleton className="h-10 w-24 rounded-lg" /> {/* Import */}
+            <Skeleton className="h-10 w-32 rounded-lg" /> {/* Add Product */}
+          </div>
+        </div>
+
+        {/* 2. Stats Cards Grid Skeleton */}
+        {/* అసలు కార్డ్స్ గ్రిడ్ లాగానే ఇక్కడ కూడా సేమ్ గ్రిడ్ వాడాలి */}
+        <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className="rounded-xl border p-4 bg-white border-zinc-200 dark:bg-white/5 dark:border-white/10"
+            >
+              <div className="flex items-center gap-4">
+                <Skeleton className="h-12 w-12 rounded-lg" /> {/* Icon Box */}
+                <div className="space-y-2">
+                  <Skeleton className="h-3 w-20 rounded-md" /> {/* Label */}
+                  <Skeleton className="h-6 w-12 rounded-md" /> {/* Value */}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 3. Search & Filter Bar Skeleton */}
+        <div className="flex flex-col md:flex-row gap-4 h-[42px]">
+          <Skeleton className="w-full md:flex-1 h-full rounded-xl" />{" "}
+          {/* Search Input */}
+          <div className="flex gap-2">
+            <Skeleton className="h-full w-[42px] rounded-xl" />{" "}
+            {/* Filter Btn */}
+            <Skeleton className="h-full w-[42px] rounded-xl" />{" "}
+            {/* Export Btn */}
+          </div>
+        </div>
+
+        {/* 4. Table Skeleton */}
+        <div className="rounded-2xl border border-zinc-200 bg-white dark:border-white/10 dark:bg-white/[0.02] overflow-hidden">
+          {/* Table Header */}
+          <div className="h-12 bg-zinc-50 border-b border-zinc-100 dark:bg-white/5 dark:border-white/10 flex items-center px-4 gap-4">
+            <Skeleton className="h-4 w-4 rounded" />
+            <Skeleton className="h-4 w-20 rounded" />
+            <Skeleton className="h-4 w-20 rounded" />
+            <Skeleton className="h-4 w-20 rounded" />
+            <Skeleton className="h-4 w-20 rounded" />
+            <Skeleton className="h-4 w-20 rounded" />
+          </div>
+          {/* Table Rows (Create 5 fake rows) */}
+          <div className="divide-y divide-zinc-100 dark:divide-white/5">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-20 px-4 flex items-center gap-4">
+                <Skeleton className="h-4 w-4 rounded" /> {/* Checkbox */}
+                <div className="flex items-center gap-3 w-48">
+                  <Skeleton className="h-10 w-10 rounded-lg" /> {/* Img */}
+                  <div className="space-y-1">
+                    <Skeleton className="h-4 w-32 rounded" /> {/* Name */}
+                    <Skeleton className="h-3 w-16 rounded" /> {/* Part No */}
+                  </div>
+                </div>
+                <Skeleton className="h-6 w-20 rounded-full" /> {/* Category */}
+                <Skeleton className="h-4 w-32 rounded" /> {/* Models */}
+                <Skeleton className="h-4 w-16 rounded" /> {/* Price */}
+                <Skeleton className="h-4 w-16 rounded" /> {/* Stock */}
+                <div className="flex gap-2 ml-auto">
+                  <Skeleton className="h-8 w-8 rounded-lg" /> {/* Action */}
+                  <Skeleton className="h-8 w-8 rounded-lg" /> {/* Action */}
+                  <Skeleton className="h-8 w-8 rounded-lg" /> {/* Action */}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
+  }
 
   // --- Styles ---
   const textPrimary = "text-zinc-900 dark:text-white";
