@@ -30,7 +30,7 @@ export default function LoginPage() {
 
       // 🔥 FIX: router.push తీసేసి window.location.href వాడండి.
       // ఇది బ్రౌజర్ ని రీఫ్రెష్ చేసి కుకీలను సర్వర్ కి పంపుతుంది (Middleware Check కోసం)
-      window.location.href = "/dashboard";
+      //window.location.href = "/dashboard"
     } catch (error: any) {
       console.error("Login error:", error);
       toast.error(
