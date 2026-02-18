@@ -172,11 +172,30 @@ export default function ChatPage() {
           setIsAutoReplyEnabled(adminData.isAutoReplyEnabled || false);
         }
 
+        // const socketUrl =
+        //   process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
+        //   "http://localhost:5000";
+
+        // newSocket = io(socketUrl, {
+        //   withCredentials: true,
+        //   transports: ["websocket", "polling"],
+        //   reconnection: true,
+        // });
+
+        // 🔥 CHANGE START: Token తెచ్చుకోవడం & Socket Connect చేయడం
+        const tokenRes = await api.get("/admin/auth/get-socket-token");
+        const token = tokenRes.data?.token;
+
         const socketUrl =
+          process.env.NEXT_PUBLIC_SOCKET_URL ||
           process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
           "http://localhost:5000";
 
+        // Token ఉంటేనే కనెక్ట్ అవ్వాలి, లేకపోతే మామూలుగా (కానీ Auth ఎర్రర్ రావచ్చు)
         newSocket = io(socketUrl, {
+          auth: {
+            token: token, // ✅ టోకెన్ ఇక్కడ పాస్ చేస్తున్నాం
+          },
           withCredentials: true,
           transports: ["websocket", "polling"],
           reconnection: true,
