@@ -120,6 +120,7 @@ interface OrderItem {
   subtotal: number;
   image?: string;
   partNumber?: string;
+
   // 🔥 Return Management
   returnStatus?: "None" | "Requested" | "Approved" | "Rejected" | "Returned";
   product?:
@@ -158,6 +159,12 @@ interface Order {
   totalAmount: number;
   paymentMethod: "COD" | "Razorpay";
   paymentStatus: "Pending" | "Completed" | "Failed" | "Refunded";
+  paymentDetails?: {
+    razorpayOrderId?: string;
+    razorpayPaymentId?: string;
+    razorpaySignature?: string;
+    paidAt?: string;
+  };
   orderStatus:
     | "Placed"
     | "Packed"
@@ -166,6 +173,7 @@ interface Order {
     | "Cancelled"
     | "Returned";
   // 🔥 Timeline Feature
+
   statusHistory?: StatusHistory[];
   createdAt: string;
   invoicePath?: string;
@@ -438,6 +446,7 @@ const OrderDetailsModal = ({
                 <CreditCard className="h-4 w-4" />
                 <span className="text-sm font-medium">Payment Details</span>
               </div>
+              {/* Payment Details Card (Updated) */}
               <div className="rounded-xl bg-zinc-50 p-4 border border-zinc-100 space-y-3 dark:bg-white/5 dark:border-white/5">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-zinc-500 dark:text-gray-400">
@@ -469,6 +478,18 @@ const OrderDetailsModal = ({
                     {order.paymentStatus}
                   </span>
                 </div>
+
+                {/* 🔥 NEW: Transaction ID (ఇక్కడ యాడ్ చేశాను) 🔥 */}
+                {order.paymentDetails?.razorpayPaymentId && (
+                  <div className="flex justify-between items-center border-t border-zinc-200 pt-2 mt-2 dark:border-white/5">
+                    <span className="text-sm text-zinc-500 dark:text-gray-400">
+                      Txn ID
+                    </span>
+                    <span className="text-xs font-mono text-zinc-900 dark:text-gray-300">
+                      {order.paymentDetails.razorpayPaymentId}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>

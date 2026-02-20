@@ -18,6 +18,7 @@ import {
   X,
   Activity,
   GalleryHorizontal,
+  CreditCard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/providers/AuthProvider"; // 🔥 Import Hook
@@ -43,6 +44,11 @@ const navItems = [
     icon: ShoppingCart,
   },
   { label: "👀 Live Monitor", href: "/dashboard/monitor", icon: Activity },
+  {
+    label: "Payments / Transactions",
+    href: "/dashboard/payments",
+    icon: CreditCard,
+  },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
