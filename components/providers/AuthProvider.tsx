@@ -186,7 +186,9 @@ export default function AuthProvider({
           if (isMounted) {
             setUser(null);
             if (pathname !== "/login") {
-              router.replace("/login");
+              setTimeout(() => {
+                router.replace("/login");
+              }, 0);
             }
           }
         } else {

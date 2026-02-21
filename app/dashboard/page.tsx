@@ -87,6 +87,18 @@ export default function DashboardPage() {
   // Mock Target
   const MONTHLY_TARGET = 50000;
 
+  // Calculations
+  const avgOrderValue = useMemo(() => {
+    if (!stats?.totalRevenue || !stats?.totalOrders) return 0;
+    return Math.round(stats.totalRevenue / stats.totalOrders);
+  }, [stats]);
+
+  const targetProgress = useMemo(() => {
+    if (!stats?.totalRevenue) return 0;
+    const progress = (stats.totalRevenue / MONTHLY_TARGET) * 100;
+    return Math.min(progress, 100);
+  }, [stats]);
+
   useEffect(() => {
     setHasMounted(true);
     setCurrentDate(
@@ -133,18 +145,6 @@ export default function DashboardPage() {
       setIsLoading(false);
     }
   };
-
-  // Calculations
-  const avgOrderValue = useMemo(() => {
-    if (!stats?.totalRevenue || !stats?.totalOrders) return 0;
-    return Math.round(stats.totalRevenue / stats.totalOrders);
-  }, [stats]);
-
-  const targetProgress = useMemo(() => {
-    if (!stats?.totalRevenue) return 0;
-    const progress = (stats.totalRevenue / MONTHLY_TARGET) * 100;
-    return Math.min(progress, 100);
-  }, [stats]);
 
   const handleExport = () => {
     if (monthlyRevenue.length === 0) {

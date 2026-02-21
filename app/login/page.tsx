@@ -242,7 +242,7 @@ export default function LoginPage() {
       className="relative flex min-h-screen w-full items-center justify-center p-4 lg:justify-end lg:p-8 bg-cover bg-center bg-no-repeat font-sans selection:bg-blue-500/30"
       style={{
         // 🖼️ మీ బ్యాక్‌గ్రౌండ్ ఇమేజ్ URL
-        backgroundImage: 'url("/login-Page.png")',
+        backgroundImage: 'url("/background.png")',
       }}
     >
       {/* 🌌 UPDATE: Dark Overlay - బ్లర్ పూర్తిగా తీసేసాను. కేవలం ఇమేజ్ మీద డార్క్ షేడ్ మాత్రమే ఉంటుంది, కాబట్టి ఇమేజ్ 100% క్లారిటీగా కనిపిస్తుంది. */}
@@ -275,7 +275,7 @@ export default function LoginPage() {
             >
               {/* 🖼️ లోగో */}
               <Image
-                src="/hyundai-logo.png"
+                src="/logos.png"
                 alt="Hyundai Logo"
                 width={70}
                 height={70}
