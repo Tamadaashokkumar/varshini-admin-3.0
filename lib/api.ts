@@ -57,6 +57,67 @@ api.interceptors.request.use(
   },
 );
 
+// // ============================================================================
+// // RESPONSE INTERCEPTOR (With Auto Refresh Logic)
+// // ============================================================================
+// api.interceptors.response.use(
+//   (response: AxiosResponse) => {
+//     return response;
+//   },
+//   async (error: AxiosError) => {
+//     const originalRequest = error.config as InternalAxiosRequestConfig & {
+//       _retry?: boolean;
+//     };
+
+//     if (!originalRequest) return Promise.reject(error);
+
+//     // 401 Unauthorized వస్తే (Token Expire అయితే)
+//     if (error.response?.status === 401 && !originalRequest._retry) {
+//       // లాగిన్ లేదా రిఫ్రెష్ కాల్స్ ఫెయిల్ అయితే వదిలేయ్
+//       if (
+//         originalRequest.url?.includes("/auth/login") ||
+//         originalRequest.url?.includes("/auth/refresh-token")
+//       ) {
+//         return Promise.reject(error);
+//       }
+
+//       // Queue Logic
+//       if (isRefreshing) {
+//         return new Promise((resolve, reject) => {
+//           failedQueue.push({ resolve, reject });
+//         })
+//           .then(() => api(originalRequest))
+//           .catch((err) => Promise.reject(err));
+//       }
+
+//       // రిఫ్రెష్ ప్రాసెస్ స్టార్ట్
+//       originalRequest._retry = true;
+//       isRefreshing = true;
+
+//       try {
+//         // 🔥 FIX: 400 Bad Request రాకుండా {} (Empty Body) పంపిస్తున్నాం
+//         await api.post("/admin/auth/refresh-token", {});
+
+//         // సక్సెస్! క్యూలో ఉన్నవాటిని రన్ చేయి
+//         processQueue(null);
+
+//         // ఒరిజినల్ రిక్వెస్ట్ మళ్ళీ పంపు
+//         return api(originalRequest);
+//       } catch (refreshError) {
+//         // రిఫ్రెష్ ఫెయిల్ అయితే (నిజంగానే సెషన్ పోయింది)
+//         processQueue(refreshError);
+
+//         // AuthContext లో దీన్ని హ్యాండిల్ చేద్దాం.
+//         return Promise.reject(refreshError);
+//       } finally {
+//         isRefreshing = false;
+//       }
+//     }
+
+//     return Promise.reject(error);
+//   },
+// );
+
 // ============================================================================
 // RESPONSE INTERCEPTOR (With Auto Refresh Logic)
 // ============================================================================
@@ -73,7 +134,8 @@ api.interceptors.response.use(
 
     // 401 Unauthorized వస్తే (Token Expire అయితే)
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // లాగిన్ లేదా రిఫ్రెష్ కాల్స్ ఫెయిల్ అయితే వదిలేయ్
+      // లాగిన్ లేదా రిఫ్రెష్ కాల్స్ ఫెయిల్ అయితే వదిలేయ్ (లూప్ ఆపడానికి)
+      // 🔥 FIX 1: "/auth/check-session" ని ఇక్కడ బ్లాక్ చేయకూడదు
       if (
         originalRequest.url?.includes("/auth/login") ||
         originalRequest.url?.includes("/auth/refresh-token")
@@ -86,7 +148,11 @@ api.interceptors.response.use(
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
-          .then(() => api(originalRequest))
+          .then(() => {
+            // 🔥 FIX 2: క్యూలో ఉన్నవి మళ్ళీ పంపేటప్పుడు కూడా _retry=true పెట్టాలి
+            originalRequest._retry = true;
+            return api(originalRequest);
+          })
           .catch((err) => Promise.reject(err));
       }
 
@@ -95,8 +161,15 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // 🔥 FIX: 400 Bad Request రాకుండా {} (Empty Body) పంపిస్తున్నాం
-        await api.post("/admin/auth/refresh-token", {});
+        // 🔥 400 Bad Request రాకుండా {} (Empty Body) పంపిస్తున్నాం
+        // గమనిక: ఇక్కడ "axios" (Global axios) వాడటం బెటర్, ఎందుకంటే మళ్ళీ ఇదే ఇంటర్సెప్టర్ లోకి రాకుండా ఉంటుంది
+        await axios.post(
+          `${API_BASE_URL}/admin/auth/refresh-token`,
+          {},
+          {
+            withCredentials: true, // కుకీస్ వెళ్ళడానికి
+          },
+        );
 
         // సక్సెస్! క్యూలో ఉన్నవాటిని రన్ చేయి
         processQueue(null);
@@ -107,7 +180,15 @@ api.interceptors.response.use(
         // రిఫ్రెష్ ఫెయిల్ అయితే (నిజంగానే సెషన్ పోయింది)
         processQueue(refreshError);
 
-        // AuthContext లో దీన్ని హ్యాండిల్ చేద్దాం.
+        // 🔥 FIX 3: టోకెన్ నిజంగా ఎక్స్‌పైర్ అయితే డైరెక్ట్ గా లాగిన్ కి పంపించేయాలి
+        if (typeof window !== "undefined") {
+          console.error(
+            "Admin session expired permanently. Redirecting to login.",
+          );
+          // కావాలంటే localStorage క్లీన్ చేయొచ్చు
+          // window.location.href = "/login"; // Next.js కాబట్టి AuthProvider లో హ్యాండిల్ చేయడం బెస్ట్.
+        }
+
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
